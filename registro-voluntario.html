@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de voluntario(a) — Aves de Chile</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header>
+    <div class="marca">
+      <p class="titulo-sitio">Aves de Chile</p>
+    </div>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="registro-voluntario.html" aria-current="page">Registrarse</a></li>
+        <li><a href="registrar-avistamiento.html">Informar avistamiento</a></li>
+        <li><a href="listado-avistamientos.html">Ver avistamientos</a></li>
+        <li><a href="estadisticas.html">Estadísticas</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Registro de voluntario(a)</h1>
+    <p>
+      Los campos marcados con <span class="obligatorio">*</span> son obligatorios.
+      Esta información se usa para identificarte y contactarte; no se envía a
+      ningún servidor, solo se guarda en tu navegador para efectos de esta demo.
+    </p>
+
+    <div id="mensaje-formulario" role="alert"></div>
+
+    <form id="formulario-voluntario" novalidate>
+      <fieldset>
+        <legend>Datos personales</legend>
+
+        <div class="campo">
+          <label for="nombres">Nombres <span class="obligatorio">*</span></label>
+          <input type="text" id="nombres" name="nombres" autocomplete="given-name">
+          <p class="error" id="error-nombres"></p>
+        </div>
+
+        <div class="campo">
+          <label for="apellidos">Apellidos <span class="obligatorio">*</span></label>
+          <input type="text" id="apellidos" name="apellidos" autocomplete="family-name">
+          <p class="error" id="error-apellidos"></p>
+        </div>
+
+        <div class="campo">
+          <label for="rut">RUT (opcional)</label>
+          <input type="text" id="rut" name="rut" placeholder="12.345.678-5" autocomplete="off">
+          <p class="ayuda">Formato con puntos y guión. Si lo ingresas, se validará el dígito verificador.</p>
+          <p class="error" id="error-rut"></p>
+        </div>
+
+        <div class="campo">
+          <label for="fecha-nacimiento">Fecha de nacimiento (opcional)</label>
+          <input type="date" id="fecha-nacimiento" name="fecha-nacimiento">
+          <p class="ayuda">Debes tener al menos 15 años para ser voluntario(a).</p>
+          <p class="error" id="error-fecha-nacimiento"></p>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Datos de contacto</legend>
+
+        <div class="campo">
+          <label for="email">Correo electrónico <span class="obligatorio">*</span></label>
+          <input type="email" id="email" name="email" autocomplete="email">
+          <p class="error" id="error-email"></p>
+        </div>
+
+        <div class="campo">
+          <label for="celular">Celular <span class="obligatorio">*</span></label>
+          <input type="tel" id="celular" name="celular" placeholder="+56 9 12345678" autocomplete="tel">
+          <p class="ayuda">Formato chileno: +56 9 seguido de 8 dígitos.</p>
+          <p class="error" id="error-celular"></p>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Dirección postal</legend>
+
+        <div class="campo">
+          <label for="region">Región <span class="obligatorio">*</span></label>
+          <select id="region" name="region">
+            <option value="" selected disabled>Seleccione región</option>
+          </select>
+          <p class="error" id="error-region"></p>
+        </div>
+
+        <div class="campo">
+          <label for="comuna">Comuna <span class="obligatorio">*</span></label>
+          <select id="comuna" name="comuna" disabled>
+            <option value="" selected disabled>Seleccione primero una región</option>
+          </select>
+          <p class="error" id="error-comuna"></p>
+        </div>
+
+        <div class="campo">
+          <label for="direccion">Calle y número (opcional)</label>
+          <input type="text" id="direccion" name="direccion" autocomplete="address-line1">
+          <p class="error" id="error-direccion"></p>
+        </div>
+      </fieldset>
+
+      <div class="campo">
+        <label for="acepta-terminos">
+          <input type="checkbox" id="acepta-terminos" name="acepta-terminos" style="width:auto;">
+          Acepto que mis datos se usen solo con fines de este prototipo <span class="obligatorio">*</span>
+        </label>
+        <p class="error" id="error-acepta-terminos"></p>
+      </div>
+
+      <button type="submit">Registrarme</button>
+    </form>
+  </main>
+
+  <footer>
+    <p>Unión de Ornitólogos de Chile — Prototipo académico CC5002.</p>
+  </footer>
+
+  <script src="js/almacenamiento.js"></script>
+  <script src="js/validaciones.js"></script>
+  <script src="js/datos-chile.js"></script>
+  <script src="js/semilla.js"></script>
+  <script src="js/registro.js"></script>
+</body>
+</html>

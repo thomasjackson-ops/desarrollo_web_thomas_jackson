@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aves de Chile — Registro de avistamientos</title>
+  <meta name="description" content="Prototipo para gestionar el registro de voluntarios y avistamientos de aves en Chile.">
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header>
+    <div class="marca">
+      <p class="titulo-sitio">Aves de Chile</p>
+    </div>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a href="index.html" aria-current="page">Inicio</a></li>
+        <li><a href="registro-voluntario.html">Registrarse</a></li>
+        <li><a href="registrar-avistamiento.html">Informar avistamiento</a></li>
+        <li><a href="listado-avistamientos.html">Ver avistamientos</a></li>
+        <li><a href="estadisticas.html">Estadísticas</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="tarjeta">
+      <h1>Registro de avistamientos de aves</h1>
+      <p>
+        Este sistema es impulsado por la Unión de Ornitólogos de Chile para mantener
+        actualizado el registro de avistamientos de aves realizados por personas
+        voluntarias a lo largo del país, y así poder detectar cambios en la
+        población de aves asociados a fenómenos del clima.
+      </p>
+      <p>
+        <strong>Este sitio es un prototipo académico.</strong> Los datos que ingreses se
+        guardan únicamente en tu navegador (no se envían a ningún servidor) y su único
+        propósito es probar la navegación, los formularios y las reglas de validación.
+      </p>
+    </section>
+
+    <section aria-labelledby="titulo-acciones">
+      <h2 id="titulo-acciones">¿Qué quieres hacer?</h2>
+      <div class="acciones-principales">
+        <article>
+          <h3>Soy nuevo(a) voluntario(a)</h3>
+          <p>Regístrate con tus datos de contacto y dirección para comenzar a informar avistamientos.</p>
+          <a class="boton" href="registro-voluntario.html">Registrarme</a>
+        </article>
+        <article>
+          <h3>Informar un avistamiento</h3>
+          <p>Registra el tipo de ave, lugar, fecha, hora y una foto o video como evidencia.</p>
+          <a class="boton secundario" href="registrar-avistamiento.html">Informar avistamiento</a>
+        </article>
+        <article>
+          <h3>Explorar avistamientos</h3>
+          <p>Consulta el listado completo con filtros, orden y paginación.</p>
+          <a class="boton secundario" href="listado-avistamientos.html">Ver listado</a>
+        </article>
+        <article>
+          <h3>Ver estadísticas</h3>
+          <p>Revisa indicadores y gráficos sobre voluntarios y avistamientos registrados.</p>
+          <a class="boton secundario" href="estadisticas.html">Ver estadísticas</a>
+        </article>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>Unión de Ornitólogos de Chile — Prototipo académico CC5002. Los datos ingresados no se almacenan de forma permanente en un servidor.</p>
+  </footer>
+
+  <script src="js/almacenamiento.js"></script>
+  <script src="js/semilla.js"></script>
+</body>
+</html>

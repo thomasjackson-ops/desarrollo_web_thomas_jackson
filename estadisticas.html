@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Estadísticas — Aves de Chile</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header>
+    <div class="marca">
+      <p class="titulo-sitio">Aves de Chile</p>
+    </div>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="registro-voluntario.html">Registrarse</a></li>
+        <li><a href="registrar-avistamiento.html">Informar avistamiento</a></li>
+        <li><a href="listado-avistamientos.html">Ver avistamientos</a></li>
+        <li><a href="estadisticas.html" aria-current="page">Estadísticas</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Indicadores y estadísticas</h1>
+    <p>Resumen de voluntarios y avistamientos registrados en el sistema.</p>
+
+    <div class="tarjetas-resumen">
+      <div class="tarjeta-metrica">
+        <span class="valor" id="total-voluntarios">0</span>
+        <span>Voluntarios registrados</span>
+      </div>
+      <div class="tarjeta-metrica">
+        <span class="valor" id="total-avistamientos">0</span>
+        <span>Avistamientos registrados</span>
+      </div>
+      <div class="tarjeta-metrica">
+        <span class="valor" id="total-especies">0</span>
+        <span>Especies distintas avistadas</span>
+      </div>
+      <div class="tarjeta-metrica">
+        <span class="valor" id="total-regiones">0</span>
+        <span>Regiones con avistamientos</span>
+      </div>
+    </div>
+
+    <section class="tarjeta" aria-labelledby="titulo-grafico-tipos">
+      <h2 id="titulo-grafico-tipos">Avistamientos por tipo de ave</h2>
+      <svg id="grafico-tipos" class="grafico-svg" role="img" aria-labelledby="titulo-grafico-tipos"></svg>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="titulo-grafico-regiones">
+      <h2 id="titulo-grafico-regiones">Voluntarios por región</h2>
+      <svg id="grafico-regiones" class="grafico-svg" role="img" aria-labelledby="titulo-grafico-regiones"></svg>
+    </section>
+
+    <section class="tarjeta" aria-labelledby="titulo-grafico-meses">
+      <h2 id="titulo-grafico-meses">Avistamientos por mes (últimos 6 meses)</h2>
+      <svg id="grafico-meses" class="grafico-svg" role="img" aria-labelledby="titulo-grafico-meses"></svg>
+    </section>
+  </main>
+
+  <footer>
+    <p>Unión de Ornitólogos de Chile — Prototipo académico CC5002.</p>
+  </footer>
+
+  <script src="js/almacenamiento.js"></script>
+  <script src="js/semilla.js"></script>
+  <script src="js/estadisticas.js"></script>
+</body>
+</html>

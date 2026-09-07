@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Informar avistamiento — Aves de Chile</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header>
+    <div class="marca">
+      <p class="titulo-sitio">Aves de Chile</p>
+    </div>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a href="index.html">Inicio</a></li>
+        <li><a href="registro-voluntario.html">Registrarse</a></li>
+        <li><a href="registrar-avistamiento.html" aria-current="page">Informar avistamiento</a></li>
+        <li><a href="listado-avistamientos.html">Ver avistamientos</a></li>
+        <li><a href="estadisticas.html">Estadísticas</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Informar un avistamiento</h1>
+
+    <div id="aviso-sin-voluntarios" class="tarjeta" hidden>
+      <p>
+        Todavía no hay ningún voluntario(a) registrado en este navegador.
+        Debes <a href="registro-voluntario.html">registrarte primero</a> para
+        poder informar un avistamiento.
+      </p>
+    </div>
+
+    <div id="contenedor-formulario">
+      <p>
+        Los campos marcados con <span class="obligatorio">*</span> son obligatorios.
+        Debes adjuntar al menos una foto o un video como evidencia del avistamiento.
+      </p>
+
+      <div id="mensaje-formulario" role="alert"></div>
+
+      <form id="formulario-avistamiento" novalidate>
+        <fieldset>
+          <legend>¿Quién informa?</legend>
+
+          <div class="campo">
+            <label for="voluntario">Voluntario(a) <span class="obligatorio">*</span></label>
+            <select id="voluntario" name="voluntario">
+              <option value="" selected disabled>Seleccione quién informa</option>
+            </select>
+            <p class="ayuda">Solo aparecen las personas ya registradas como voluntarias.</p>
+            <p class="error" id="error-voluntario"></p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Identificación del ave</legend>
+
+          <div class="campo">
+            <label for="tipo-ave">Tipo de ave <span class="obligatorio">*</span></label>
+            <select id="tipo-ave" name="tipo-ave">
+              <option value="" selected disabled>Seleccione tipo</option>
+            </select>
+            <p class="error" id="error-tipo-ave"></p>
+          </div>
+
+          <div class="campo">
+            <label for="nombre-ave">Nombre del ave <span class="obligatorio">*</span></label>
+            <select id="nombre-ave" name="nombre-ave" disabled>
+              <option value="" selected disabled>Seleccione primero un tipo</option>
+            </select>
+            <p class="error" id="error-nombre-ave"></p>
+          </div>
+
+          <div class="campo">
+            <label for="cantidad">Cantidad de aves observadas (opcional)</label>
+            <input type="number" id="cantidad" name="cantidad" min="1" max="500" step="1">
+            <p class="error" id="error-cantidad"></p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Lugar del avistamiento</legend>
+
+          <div class="campo">
+            <label for="region">Región <span class="obligatorio">*</span></label>
+            <select id="region" name="region">
+              <option value="" selected disabled>Seleccione región</option>
+            </select>
+            <p class="error" id="error-region"></p>
+          </div>
+
+          <div class="campo">
+            <label for="comuna">Comuna <span class="obligatorio">*</span></label>
+            <select id="comuna" name="comuna" disabled>
+              <option value="" selected disabled>Seleccione primero una región</option>
+            </select>
+            <p class="error" id="error-comuna"></p>
+          </div>
+
+          <div class="campo">
+            <label for="lugar">Lugar específico (opcional)</label>
+            <input type="text" id="lugar" name="lugar" placeholder="Ej: Parque Forestal, sendero norte">
+            <p class="error" id="error-lugar"></p>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Fecha, hora y evidencia</legend>
+
+          <div class="campo">
+            <label for="fecha">Fecha del avistamiento <span class="obligatorio">*</span></label>
+            <input type="date" id="fecha" name="fecha">
+            <p class="ayuda">No puede ser una fecha futura ni de hace más de 5 años.</p>
+            <p class="error" id="error-fecha"></p>
+          </div>
+
+          <div class="campo">
+            <label for="hora">Hora del avistamiento <span class="obligatorio">*</span></label>
+            <input type="time" id="hora" name="hora">
+            <p class="error" id="error-hora"></p>
+          </div>
+
+          <div class="campo">
+            <label for="archivo">Foto o video del avistamiento <span class="obligatorio">*</span></label>
+            <input type="file" id="archivo" name="archivo" accept="image/*,video/*" multiple>
+            <p class="ayuda">Debes adjuntar al menos un archivo. Tamaño máximo 20 MB por archivo.</p>
+            <p class="error" id="error-archivo"></p>
+          </div>
+
+          <div class="campo">
+            <label for="descripcion">Descripción (opcional)</label>
+            <textarea id="descripcion" name="descripcion" rows="3" maxlength="500"></textarea>
+            <p class="ayuda"><span id="contador-descripcion">0</span>/500 caracteres</p>
+          </div>
+        </fieldset>
+
+        <button type="submit">Registrar avistamiento</button>
+      </form>
+    </div>
+  </main>
+
+  <footer>
+    <p>Unión de Ornitólogos de Chile — Prototipo académico CC5002.</p>
+  </footer>
+
+  <script src="js/almacenamiento.js"></script>
+  <script src="js/validaciones.js"></script>
+  <script src="js/datos-chile.js"></script>
+  <script src="js/datos-aves.js"></script>
+  <script src="js/semilla.js"></script>
+  <script src="js/avistamiento.js"></script>
+</body>
+</html>

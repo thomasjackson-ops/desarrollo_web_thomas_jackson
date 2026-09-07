@@ -1,0 +1,361 @@
+/* Prototipo "Aves de Chile" - hoja de estilos única para todas las páginas */
+
+:root {
+  --color-primario: #2f6f4e;
+  --color-primario-oscuro: #234f38;
+  --color-secundario: #3f7fa6;
+  --color-fondo: #f5f7f4;
+  --color-superficie: #ffffff;
+  --color-texto: #26302b;
+  --color-borde: #d4dbd1;
+  --color-error: #b3261e;
+  --color-exito: #1e6b3a;
+  --radio: 8px;
+  --espacio: 1rem;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-family: "Segoe UI", Verdana, Arial, sans-serif;
+  color: var(--color-texto);
+  background-color: var(--color-fondo);
+  line-height: 1.5;
+}
+
+body {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+main {
+  flex: 1;
+  width: min(1000px, 100% - 2rem);
+  margin-inline: auto;
+  padding-block: 2rem;
+}
+
+h1, h2, h3 {
+  color: var(--color-primario-oscuro);
+  line-height: 1.25;
+}
+
+a {
+  color: var(--color-secundario);
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid var(--color-secundario);
+  outline-offset: 2px;
+}
+
+/* Encabezado y navegación */
+header {
+  background-color: var(--color-primario);
+  color: #fff;
+  padding: 0.75rem 1rem;
+}
+
+header .marca {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: min(1000px, 100% - 2rem);
+  margin-inline: auto;
+}
+
+.titulo-sitio {
+  font-size: 1.3rem;
+  font-weight: 700;
+  margin: 0.25rem 0 0.75rem;
+}
+
+header nav {
+  width: min(1000px, 100% - 2rem);
+  margin-inline: auto;
+}
+
+header nav ul {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+  margin: 0;
+  padding: 0;
+}
+
+header nav a {
+  color: #fff;
+  text-decoration: none;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radio);
+  display: inline-block;
+}
+
+header nav a:hover,
+header nav a:focus-visible {
+  background-color: var(--color-primario-oscuro);
+}
+
+/* Pie de página */
+footer {
+  background-color: var(--color-primario-oscuro);
+  color: #eef3ee;
+  text-align: center;
+  padding: 1rem;
+  font-size: 0.9rem;
+}
+
+/* Secciones tipo tarjeta */
+.tarjeta {
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.tarjetas-resumen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tarjeta-metrica {
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1rem;
+  text-align: center;
+}
+
+.tarjeta-metrica .valor {
+  display: block;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primario);
+}
+
+/* Formularios */
+fieldset {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1rem 1.25rem 1.25rem;
+  margin: 0 0 1.5rem;
+}
+
+legend {
+  font-weight: 700;
+  padding: 0 0.5rem;
+  color: var(--color-primario-oscuro);
+}
+
+.campo {
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  max-width: 480px;
+}
+
+.campo label {
+  font-weight: 600;
+}
+
+.campo .ayuda {
+  font-size: 0.85rem;
+  color: #555;
+}
+
+.campo .obligatorio {
+  color: var(--color-error);
+}
+
+input,
+select,
+textarea {
+  padding: 0.5rem;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  font: inherit;
+  background-color: #fff;
+  color: var(--color-texto);
+}
+
+input[aria-invalid="true"],
+select[aria-invalid="true"],
+textarea[aria-invalid="true"] {
+  border-color: var(--color-error);
+}
+
+.error {
+  color: var(--color-error);
+  font-size: 0.85rem;
+  min-height: 1.1em;
+}
+
+.mensaje-formulario {
+  padding: 0.75rem 1rem;
+  border-radius: var(--radio);
+  margin-bottom: 1rem;
+}
+
+.mensaje-formulario.exito {
+  background-color: #e4f3e8;
+  border: 1px solid var(--color-exito);
+  color: var(--color-exito);
+}
+
+.mensaje-formulario.error {
+  background-color: #fbeceb;
+  border: 1px solid var(--color-error);
+  color: var(--color-error);
+}
+
+button,
+.boton {
+  background-color: var(--color-primario);
+  color: #fff;
+  border: none;
+  border-radius: var(--radio);
+  padding: 0.6rem 1.2rem;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  display: inline-block;
+}
+
+button:hover,
+.boton:hover {
+  background-color: var(--color-primario-oscuro);
+}
+
+button.secundario,
+.boton.secundario {
+  background-color: transparent;
+  color: var(--color-primario);
+  border: 1px solid var(--color-primario);
+}
+
+button.secundario:hover,
+.boton.secundario:hover {
+  background-color: #eaf3ec;
+}
+
+/* Listado de acciones en el inicio */
+.acciones-principales {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+}
+
+.acciones-principales article {
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 1.25rem;
+}
+
+/* Controles de listado (filtro, orden, paginación) */
+.controles-listado {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 1.5rem;
+  align-items: flex-end;
+  margin-bottom: 1rem;
+}
+
+.controles-listado .campo {
+  margin-bottom: 0;
+  min-width: 180px;
+}
+
+/* Tabla de avistamientos */
+.tabla-scroll {
+  overflow-x: auto;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  min-width: 700px;
+  background-color: var(--color-superficie);
+}
+
+caption {
+  text-align: left;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+th, td {
+  border: 1px solid var(--color-borde);
+  padding: 0.55rem 0.7rem;
+  text-align: left;
+  font-size: 0.92rem;
+}
+
+th {
+  background-color: #eaf1e9;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #fafcf9;
+}
+
+.paginacion {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+
+.paginacion button[disabled] {
+  background-color: #a9c0af;
+  cursor: not-allowed;
+}
+
+/* Gráficos SVG de estadísticas */
+.grafico-svg {
+  width: 100%;
+  height: auto;
+}
+
+.grafico-svg text {
+  font-size: 0.7rem;
+  fill: var(--color-texto);
+}
+
+.grafico-svg .barra {
+  fill: var(--color-primario);
+}
+
+.grafico-svg .barra:hover {
+  fill: var(--color-secundario);
+}
+
+.grafico-svg .eje {
+  stroke: var(--color-borde);
+  stroke-width: 1;
+}
+
+@media (max-width: 640px) {
+  .titulo-sitio {
+    font-size: 1.1rem;
+  }
+
+  main {
+    padding-block: 1.25rem;
+  }
+}
