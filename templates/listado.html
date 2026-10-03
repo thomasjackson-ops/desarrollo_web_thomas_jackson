@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+
+{% block titulo %}Aves de Chile — Listado de avistamientos{% endblock %}
+
+{% block content %}
+  <h1>Listado de avistamientos</h1>
+  <p>Filtra por ave, ordena por el criterio que prefieras y navega por páginas. Haz clic sobre una fila para ver el detalle.</p>
+
+  <form class="controles-listado" method="get" action="{{ url_for('avistamientos.listado') }}">
+    <div class="campo">
+      <label for="ave_id">Filtrar por ave</label>
+      <select id="ave_id" name="ave_id">
+        <option value="">Todas las aves</option>
+        {% for ave in aves_con_avistamientos %}
+          <option value="{{ ave.id }}" {% if ave_filtro and ave_filtro.id == ave.id %}selected{% endif %}>{{ ave.nombre }}</option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="orden">Ordenar por</label>
+      <select id="orden" name="orden">
+        <option value="fecha_desc" {% if orden_actual == 'fecha_desc' %}selected{% endif %}>Fecha (más reciente primero)</option>
+        <option value="fecha_asc" {% if orden_actual == 'fecha_asc' %}selected{% endif %}>Fecha (más antigua primero)</option>
+        <option value="lugar_asc" {% if orden_actual == 'lugar_asc' %}selected{% endif %}>Lugar (A-Z)</option>
+        <option value="lugar_desc" {% if orden_actual == 'lugar_desc' %}selected{% endif %}>Lugar (Z-A)</option>
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="por_pagina">Resultados por página</label>
+      <select id="por_pagina" name="por_pagina">
+        <option value="5" {% if por_pagina == 5 %}selected{% endif %}>5</option>
+        <option value="10" {% if por_pagina == 10 %}selected{% endif %}>10</option>
+        <option value="20" {% if por_pagina == 20 %}selected{% endif %}>20</option>
+      </select>
+    </div>
+
+    <button type="submit">Filtrar</button>
+  </form>
+
+  <p aria-live="polite">{{ paginacion.total }} avistamiento(s) encontrado(s).</p>
+
+  <div class="tabla-scroll">
+    <table>
+      <caption>Avistamientos registrados</caption>
+      <thead>
+        <tr>
+          <th scope="col">Fecha</th>
+          <th scope="col">Ave</th>
+          <th scope="col">Lugar</th>
+          <th scope="col">Voluntario(a)</th>
+          <th scope="col">Evidencia</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for avistamiento in avistamientos %}
+          <tr class="fila-avistamiento" data-href="{{ url_for('avistamientos.detalle', avistamiento_id=avistamiento.id) }}">
+            <td><a class="enlace-fila" href="{{ url_for('avistamientos.detalle', avistamiento_id=avistamiento.id) }}">{{ avistamiento.fecha_hora | fecha_larga }}</a></td>
+            <td>{{ avistamiento.ave.nombre }}</td>
+            <td>{{ avistamiento.lugar }}</td>
+            <td>{{ avistamiento.voluntario.nombre }}</td>
+            <td>{{ avistamiento.registros | length }} archivo(s)</td>
+          </tr>
+        {% else %}
+          <tr>
+            <td colspan="5">No hay avistamientos que coincidan con el filtro seleccionado.</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <nav class="paginacion" aria-label="Paginación de resultados">
+    {% if paginacion.has_prev %}
+      <a class="boton secundario" href="{{ url_for('avistamientos.listado', pagina=paginacion.prev_num, ave_id=ave_filtro.id if ave_filtro else none, orden=orden_actual, por_pagina=por_pagina) }}">Anterior</a>
+    {% else %}
+      <span class="boton secundario" aria-disabled="true">Anterior</span>
+    {% endif %}
+
+    <span aria-live="polite">Página {{ paginacion.page }} de {{ paginacion.pages or 1 }}</span>
+
+    {% if paginacion.has_next %}
+      <a class="boton secundario" href="{{ url_for('avistamientos.listado', pagina=paginacion.next_num, ave_id=ave_filtro.id if ave_filtro else none, orden=orden_actual, por_pagina=por_pagina) }}">Siguiente</a>
+    {% else %}
+      <span class="boton secundario" aria-disabled="true">Siguiente</span>
+    {% endif %}
+  </nav>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/listado.js') }}"></script>
+{% endblock %}

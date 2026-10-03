@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block titulo %}Aves de Chile{% endblock %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+  {% block head_extra %}{% endblock %}
+</head>
+<body>
+  <header>
+    <div class="marca">
+      <p class="titulo-sitio">Aves de Chile</p>
+    </div>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a href="{{ url_for('main.portada') }}" {% if active == 'inicio' %}aria-current="page"{% endif %}>Inicio</a></li>
+        <li><a href="{{ url_for('voluntarios.nuevo') }}" {% if active == 'voluntario' %}aria-current="page"{% endif %}>Registrar voluntario</a></li>
+        <li><a href="{{ url_for('avistamientos.nuevo') }}" {% if active == 'avistamiento' %}aria-current="page"{% endif %}>Informar avistamiento</a></li>
+        <li><a href="{{ url_for('avistamientos.listado') }}" {% if active == 'listado' %}aria-current="page"{% endif %}>Ver avistamientos</a></li>
+        <li><a href="{{ url_for('main.estadisticas') }}" {% if active == 'estadisticas' %}aria-current="page"{% endif %}>Estadísticas</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% if mensajes %}
+        {% for categoria, mensaje in mensajes %}
+          <div class="mensaje-formulario {{ 'exito' if categoria == 'exito' else 'error' }}" role="alert">{{ mensaje }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer>
+    <p>Unión de Ornitólogos de Chile — Tarea 2 CC5002. Datos persistidos en MySQL.</p>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>

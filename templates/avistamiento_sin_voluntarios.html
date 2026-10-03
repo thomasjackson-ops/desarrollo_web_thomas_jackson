@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block titulo %}Aves de Chile — Informar avistamiento{% endblock %}
+
+{% block content %}
+  <h1>Informar un avistamiento</h1>
+  <div class="tarjeta">
+    <p>
+      Todavía no hay ningún voluntario(a) registrado en el sistema.
+      Debes <a href="{{ url_for('voluntarios.nuevo') }}">registrarte primero</a>
+      para poder informar un avistamiento.
+    </p>
+  </div>
+{% endblock %}

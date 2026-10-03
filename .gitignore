@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+instance/
+.env
+
+# Los archivos que suben los voluntarios no van al repo, solo la carpeta
+static/uploads/*
+!static/uploads/.gitkeep

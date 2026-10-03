@@ -1,4 +1,5 @@
-/* Prototipo "Aves de Chile" - hoja de estilos única para todas las páginas */
+/* Aves de Chile - Tarea 2. Mismo sistema visual que la Tarea 1 (prototipo
+   estático), reaprovechado acá para las páginas que ahora renderiza Flask. */
 
 :root {
   --color-primario: #2f6f4e;
@@ -252,6 +253,13 @@ button.secundario:hover,
   background-color: #eaf3ec;
 }
 
+button[disabled],
+.boton[aria-disabled="true"] {
+  background-color: #a9c0af;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 /* Listado de acciones en el inicio */
 .acciones-principales {
   display: grid;
@@ -264,6 +272,40 @@ button.secundario:hover,
   border: 1px solid var(--color-borde);
   border-radius: var(--radio);
   padding: 1.25rem;
+}
+
+/* Grupo de botones de la página de éxito al registrar voluntario */
+.acciones-exito {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+/* Últimos avistamientos en la portada */
+.lista-ultimos-avistamientos {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.lista-ultimos-avistamientos li {
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 0.75rem 1rem;
+}
+
+.lista-ultimos-avistamientos .ave-nombre {
+  font-weight: 700;
+  color: var(--color-primario-oscuro);
+}
+
+.lista-ultimos-avistamientos .detalle-secundario {
+  font-size: 0.88rem;
+  color: #555;
 }
 
 /* Controles de listado (filtro, orden, paginación) */
@@ -313,6 +355,21 @@ tbody tr:nth-child(even) {
   background-color: #fafcf9;
 }
 
+/* Filas del listado que llevan al detalle del avistamiento */
+tbody tr.fila-avistamiento {
+  cursor: pointer;
+}
+
+tbody tr.fila-avistamiento:hover,
+tbody tr.fila-avistamiento:focus-within {
+  background-color: #eaf3ec;
+}
+
+tbody tr.fila-avistamiento a.enlace-fila {
+  color: inherit;
+  text-decoration: none;
+}
+
 .paginacion {
   display: flex;
   align-items: center;
@@ -321,33 +378,62 @@ tbody tr:nth-child(even) {
   flex-wrap: wrap;
 }
 
-.paginacion button[disabled] {
-  background-color: #a9c0af;
-  cursor: not-allowed;
+/* Galería de fotos/video en el detalle de un avistamiento */
+.galeria-evidencia {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
 
-/* Gráficos SVG de estadísticas */
+.galeria-evidencia li {
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+  background-color: var(--color-superficie);
+}
+
+.galeria-evidencia figure {
+  margin: 0;
+}
+
+.galeria-evidencia img,
+.galeria-evidencia video {
+  display: block;
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  background-color: #000;
+}
+
+.galeria-evidencia figcaption {
+  padding: 0.4rem 0.6rem;
+  font-size: 0.8rem;
+  color: #555;
+  word-break: break-word;
+}
+
+dl.detalle-avistamiento {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.4rem 1rem;
+}
+
+dl.detalle-avistamiento dt {
+  font-weight: 600;
+  color: var(--color-primario-oscuro);
+}
+
+dl.detalle-avistamiento dd {
+  margin: 0;
+}
+
+/* Gráficos SVG de estadísticas (para la Tarea 3) */
 .grafico-svg {
   width: 100%;
   height: auto;
-}
-
-.grafico-svg text {
-  font-size: 0.7rem;
-  fill: var(--color-texto);
-}
-
-.grafico-svg .barra {
-  fill: var(--color-primario);
-}
-
-.grafico-svg .barra:hover {
-  fill: var(--color-secundario);
-}
-
-.grafico-svg .eje {
-  stroke: var(--color-borde);
-  stroke-width: 1;
 }
 
 @media (max-width: 640px) {

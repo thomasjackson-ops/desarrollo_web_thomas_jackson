@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+
+{% block titulo %}Aves de Chile — Informar avistamiento{% endblock %}
+
+{% block content %}
+  <h1>Informar un avistamiento</h1>
+  <p>
+    Los campos marcados con <span class="obligatorio">*</span> son obligatorios.
+    Debes adjuntar al menos una foto o un video como evidencia.
+  </p>
+
+  <div id="mensaje-formulario" role="alert">
+    {% if errores %}
+      <div class="mensaje-formulario error">Revisa los campos marcados en rojo antes de continuar.</div>
+    {% endif %}
+  </div>
+
+  <form id="formulario-avistamiento" method="post" action="{{ url_for('avistamientos.nuevo') }}"
+        enctype="multipart/form-data" novalidate>
+    <fieldset>
+      <legend>¿Quién informa?</legend>
+      <div class="campo">
+        <label for="voluntario">Voluntario(a) <span class="obligatorio">*</span></label>
+        <select id="voluntario" name="voluntario" {% if errores.get('voluntario') %}aria-invalid="true"{% endif %}>
+          <option value="" {% if not valores.get('voluntario') %}selected{% endif %} disabled>Seleccione quién informa</option>
+          {% for voluntario in voluntarios %}
+            <option value="{{ voluntario.id }}" {% if valores.get('voluntario') | string == voluntario.id | string %}selected{% endif %}>
+              {{ voluntario.nombre }} ({{ voluntario.email }})
+            </option>
+          {% endfor %}
+        </select>
+        <p class="error" id="error-voluntario">{{ errores.get('voluntario', '') }}</p>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Identificación del ave</legend>
+      <div class="campo">
+        <label for="ave">Ave <span class="obligatorio">*</span></label>
+        <input type="text" id="ave" name="ave" list="lista-aves" autocomplete="off"
+               value="{{ valores.get('ave', '') }}"
+               {% if errores.get('ave') %}aria-invalid="true"{% endif %}>
+        <datalist id="lista-aves">
+          {% for ave in aves %}
+            <option value="{{ ave.nombre }}"></option>
+          {% endfor %}
+        </datalist>
+        <p class="ayuda">Escribe el nombre y elige una de las especies sugeridas.</p>
+        <p class="error" id="error-ave">{{ errores.get('ave', '') }}</p>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Lugar, fecha y hora</legend>
+
+      <div class="campo">
+        <label for="lugar">Lugar del avistamiento <span class="obligatorio">*</span></label>
+        <input type="text" id="lugar" name="lugar" placeholder="Ej: Parque Forestal, Santiago"
+               value="{{ valores.get('lugar', '') }}"
+               {% if errores.get('lugar') %}aria-invalid="true"{% endif %}>
+        <p class="error" id="error-lugar">{{ errores.get('lugar', '') }}</p>
+      </div>
+
+      <div class="campo">
+        <label for="fecha">Fecha del avistamiento <span class="obligatorio">*</span></label>
+        <input type="date" id="fecha" name="fecha" value="{{ valores.get('fecha', '') }}"
+               {% if errores.get('fecha') %}aria-invalid="true"{% endif %}>
+        <p class="ayuda">No puede ser una fecha futura ni de hace más de 5 años.</p>
+        <p class="error" id="error-fecha">{{ errores.get('fecha', '') }}</p>
+      </div>
+
+      <div class="campo">
+        <label for="hora">Hora del avistamiento <span class="obligatorio">*</span></label>
+        <input type="time" id="hora" name="hora" value="{{ valores.get('hora', '') }}"
+               {% if errores.get('fecha') %}aria-invalid="true"{% endif %}>
+      </div>
+    </fieldset>
+
+    <fieldset>
+      <legend>Evidencia y descripción</legend>
+
+      <div class="campo">
+        <label for="archivo">Foto o video del avistamiento <span class="obligatorio">*</span></label>
+        <input type="file" id="archivo" name="archivo" accept="image/*,video/*" multiple
+               {% if errores.get('archivo') %}aria-invalid="true"{% endif %}>
+        <p class="ayuda">Debes adjuntar al menos un archivo. Tamaño máximo 20 MB por archivo.</p>
+        <p class="error" id="error-archivo">{{ errores.get('archivo', '') }}</p>
+      </div>
+
+      <div class="campo">
+        <label for="descripcion">Descripción (opcional)</label>
+        <textarea id="descripcion" name="descripcion" rows="3" maxlength="500">{{ valores.get('descripcion', '') }}</textarea>
+        <p class="ayuda"><span id="contador-descripcion">0</span>/500 caracteres</p>
+        <p class="error" id="error-descripcion">{{ errores.get('descripcion', '') }}</p>
+      </div>
+    </fieldset>
+
+    <button type="submit">Registrar avistamiento</button>
+  </form>
+
+  <script type="application/json" id="datos-aves">{{ aves | map(attribute="nombre") | list | tojson }}</script>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/validaciones.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/avistamiento.js') }}"></script>
+{% endblock %}
