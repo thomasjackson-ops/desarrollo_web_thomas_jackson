@@ -1,44 +1,130 @@
-# Aves de Chile — Tarea 1 (CC5002)
+# Aves de Chile — Tarea 2 (CC5002)
 
-Prototipo del sistema de registro de avistamientos de aves para la Unión de Ornitólogos de Chile. Es solo HTML5 + CSS3 + JavaScript, sin backend, tal como pide el enunciado. Se abre directo con el navegador desde `index.html`, no necesita servidor.
+Backend en Flask + SQLAlchemy + MySQL para las funcionalidades de registro
+de voluntario, registro de avistamiento (con archivos de verdad) y listado
+paginado/filtrado/con detalle, construido sobre el prototipo de la Tarea 1.
+Las estadísticas quedan para la Tarea 3, según el enunciado.
 
-## Páginas
+## Cómo correrlo
 
-- `index.html` — inicio, con accesos directos a cada parte del sistema.
-- `registro-voluntario.html` — registro de voluntario(a).
-- `registrar-avistamiento.html` — registrar un avistamiento.
-- `listado-avistamientos.html` — listado con filtro, orden y paginación.
-- `estadisticas.html` — indicadores y gráficos.
+```bash
+python -m venv venv
+venv\Scripts\activate          # en Windows
+pip install -r requirements.txt
+```
 
-El CSS está todo en `css/estilos.css` y el JS lo separé por archivo según lo que hace cada uno (datos de Chile, datos de aves, "base de datos" en localStorage, validaciones, y un archivo por página con la lógica propia de esa página).
+Antes de levantar la app hay que tener MySQL corriendo en `localhost:3306`
+y cargar la base de datos con los 3 scripts de `bdds_y_modelorelacional/`,
+en este orden (el primero ya crea el usuario `cc5002`/`programacionweb` que
+exige el enunciado):
 
-## Cosas que decidí yo y que quiero dejar anotadas para la corrección
+```bash
+mysql -u root < bdds_y_modelorelacional/tarea2.sql
+mysql -u root tarea2 --default-character-set=utf8 < bdds_y_modelorelacional/region-comuna.sql
+mysql -u root tarea2 --default-character-set=utf8 < bdds_y_modelorelacional/aves.sql
+```
 
-**Por qué uso localStorage si el enunciado dice que no hace falta guardar nada.** Literalmente no es obligatorio, pero si no guardaba nada la demo se sentía rota: me registro, cambio de página, y ya no existo. Entonces usé `localStorage` para voluntarios y avistamientos. Todo vive en el navegador, no hay ningún servidor ni backend de por medio, es solo para que la navegación se sienta completa al probarla. Además, la primera vez que se abre el sitio se cargan solos algunos voluntarios y avistamientos de ejemplo (función `sembrarDatosDemo` en `js/almacenamiento.js`), para no tener que llenar el listado a mano antes de poder mostrar el filtro/orden/paginación/gráficos.
+Lo del `--default-character-set=utf8` no es opcional: si se cargan esos dos
+archivos sin especificarlo, el cliente de mysql asume otro charset y los
+acentos quedan guardados corruptos (tipo "Regi├│n" en vez de "Región"). Por
+la misma razón la URI de conexión en `config.py` lleva `?charset=utf8mb4`.
 
-**Cómo relaciono el avistamiento con el voluntario, sin inventar un login.**
-Al principio hice un sistema de login con contraseña, pero revisando el enunciado de nuevo me di cuenta que eso no lo pedían — piden datos para identificar y contactar al voluntario, no un sistema de autenticación. Lo saqué. Lo que sí exige el enunciado es que sea un "voluntario registrado" quien informa, así que en `registrar-avistamiento.html` hay un select "¿Quién informa?" que se llena con los voluntarios ya registrados (si no hay ninguno, la página pide registrarse primero). Para que no haya que rebuscarlo en la lista cada vez, guardo en `sessionStorage` cuál fue el último voluntario que informó algo en esta pestaña y lo dejo preseleccionado
-— es solo una comodidad, se pierde al cerrar la pestaña,no es autenticación de ningún tipo.
-**Validaciones todas en JavaScript, nada de confiar en `required`.** Están todas juntas en `js/validaciones.js`:
+Y después:
 
-- Nombre/apellido: solo letras (con tildes y ñ), entre 2 y 50 caracteres.
-- Email: formato típico `algo@algo.algo`.
-- Celular: tiene que venir como `+56 9 XXXXXXXX`.
-- RUT (es opcional): si lo escriben, se calcula el dígito verificador de verdad con el algoritmo módulo 11, no solo el formato.
-- Fecha de nacimiento (opcional): entre 15 y 110 años, no puede ser futura.
-- Fecha del avistamiento: no puede ser futura ni tener más de 5 años (esto lo saqué del ejemplo que dan en el enunciado).
-- Hora: formato válido.
-- Foto/video: obligatorio adjuntar al menos uno, se revisa que sea imagen o video y que no pese más de 20 MB. El archivo no se sube a ningún lado ni se guarda de verdad, solo registro su nombre — total, tampoco hay dónde subirlo sin backend.
+```bash
+python app.py
+```
 
-**Región/comuna y tipo/ave con selects dependientes.** Metí las 16 regiones de Chile con sus comunas en `js/datos-chile.js`, y al elegir región se llena solo el select de comuna. Mismo patrón para tipo de ave → nombre del ave (`js/datos-aves.js`), que también es el que usa el filtro del listado.
+Abre `http://127.0.0.1:5000/`.
 
-**El listado (`js/listado.js`)** junta los avistamientos sembrados con los que voy agregando, y ahí mismo en el cliente aplico el filtro por tipo, el orden (por fecha o por lugar, ambos sentidos) y la paginación con tamaño de página elegible.
+## Decisiones y detalles a tener en cuenta
 
-**Los gráficos son SVG hechos a mano en JS**, sin ninguna librería externa (no quería depender de un CDN para algo tan simple, y así también me aseguraba de no meter errores raros al validador de HTML/CSS).
+**El esquema de `tarea2.sql` no se tocó.** Los modelos de `models.py`
+mapean tabla por tabla, columna por columna, exactamente como viene ese
+script. No se usa `db.create_all()` en ningún lado: la base de datos se
+arma corriendo los 3 scripts que dieron, la app solo se conecta y los usa
+con SQLAlchemy.
 
-**Sobre el HTML.** Traté de usar harto tag semántico (`header`, `nav`, `main`, `section`, `article`, `footer`, `fieldset`/`legend` para agrupar los formularios, `table` con `caption`/`thead`/`tbody`) y evitar `div` metidos porque sí. Los formularios y las páginas las probé con el validador de W3C (HTML y CSS) y no me quedó ningún error.
+**El formulario de voluntario quedó recortado respecto a la Tarea 1 para
+calzar con el modelo real.** La tabla `voluntario` solo tiene `nombre` (un
+campo, no nombres/apellidos separados), `email`, `telefono` y `comuna_id`
+— no hay columnas para RUT, fecha de nacimiento ni dirección (calle/
+número), que sí estaban en la Tarea 1. En vez de forzar el modelo para
+soportar campos que no pedían, el formulario se ajustó al esquema que
+dieron. `fecha_registro` la pone el propio servidor (`default=datetime.now`
+en el modelo) en el momento del insert, tal como pide el enunciado.
 
-## Para probar
+**No existe "tipo de ave".** La tabla `ave` solo tiene `nombre` (585
+especies cargadas desde `aves.sql`, sin ninguna categoría), así que el
+formulario de avistamiento usa un `<input list>` (datalist nativo de
+HTML5) con las 585 especies, y el listado filtra directo por ave en vez de
+por "tipo".
 
-Basta con abrir `index.html`. Si quieren ver el listado o las estadísticas con contenido sin registrarse, ya vienen datos de ejemplo cargados solos. Para probar el flujo completo: regístrate en `registro-voluntario.html`, eso te deja disponible en el select "¿Quién informa?" de
-`registrar-avistamiento.html`.
+**`fecha_hora` es una sola columna DATETIME.** El formulario sigue pidiendo
+fecha y hora por separado (dos inputs, mejor UX), pero se combinan en el
+servidor antes de guardar (`combinar_fecha_hora` en `validadores.py`).
+
+**Las validaciones existen dos veces.** Las de JavaScript de la Tarea 1 se
+mantienen, adaptadas al nuevo set de campos (sin RUT, sin fecha de
+nacimiento, sin "tipo de ave") y sirven para el feedback inmediato en el
+formulario. Pero el cliente se puede saltar sin problema (JS deshabilitado,
+un POST armado a mano con curl, etc.), así que cada regla se vuelve a
+chequear en el servidor, en `validadores.py`: nombres con números, emails
+mal formados, teléfonos fuera de formato, fechas futuras, aves que no
+existen, descripciones muy largas, archivos con extensión no permitida,
+todo se rechaza igual aunque no pase por el navegador.
+
+**Patrón POST/Redirect/GET.** Tanto el registro de voluntario como el de
+avistamiento, si salen bien, terminan en un redirect (no en un render
+directo del resultado), para que si la persona refresca la página no se
+vuelva a insertar el mismo registro. El de voluntario redirige a una
+página de éxito con las dos opciones que pide el enunciado ("registrar un
+avistamiento para este voluntario" o "volver al inicio"); el de
+avistamiento redirige directo a la portada con un mensaje flash, como pide
+el enunciado.
+
+**Los archivos se guardan de verdad, uno por fila en `registro`.** Cuando
+se sube más de un archivo en un mismo avistamiento, cada uno genera su
+propia fila en `registro` (la tabla está pensada para eso: `avistamiento_id`
+se repite). Se guardan en `static/uploads/<id_avistamiento>/<nombre
+aleatorio>.<extensión>` — el nombre en disco es un UUID para que nadie
+pueda sobrescribir el archivo de otro avistamiento jugando con el nombre
+original, pero `nombre_archivo` en la base de datos guarda el nombre real
+que subió la persona (ese es el que se muestra en la interfaz). El insert
+del avistamiento y el de sus archivos van en la misma transacción
+(`db.session.flush()` para tener el id antes de guardar los archivos en
+disco, y si algo falla a mitad de camino se hace rollback).
+
+**Sobre entradas maliciosas.** Las consultas pasan todas por el ORM de
+SQLAlchemy, nunca se concatenan strings para armar SQL. El criterio de
+orden del listado (`?orden=...`) tampoco se interpola directo: hay un
+diccionario fijo de valores permitidos y cualquier otra cosa cae al valor
+por defecto. Los IDs en la URL (`/avistamientos/<int:id>`) usan el
+conversor `<int:...>` de Flask, que ya rechaza con 404 cualquier cosa que
+no sea un entero. Los parámetros de query (`?pagina=`, `?ave_id=`,
+`?por_pagina=`) se leen con `request.args.get(..., type=int)` y caen a un
+valor por defecto si vienen vacíos, negativos o no numéricos. Jinja2
+escapa por defecto todo lo que se imprime con `{{ }}`, así que tampoco hay
+XSS vía nombre, lugar o descripción. Y para los archivos: se valida
+extensión (lista blanca) y tamaño máximo antes de guardar nada en disco, y
+el nombre con el que se guardan en el filesystem nunca es el que mandó el
+usuario (`secure_filename` + UUID), para evitar path traversal.
+
+## Estructura
+
+```
+app.py                  # crea la app, registra blueprints, errorhandlers
+config.py                # credenciales de BD, carpeta de uploads, límites
+extensions.py             # instancia de SQLAlchemy
+models.py                 # mapea 1 a 1 las tablas de tarea2.sql
+validadores.py            # todas las reglas de validación de servidor
+routes/
+  main.py                 # portada + placeholder de estadísticas
+  voluntarios.py           # registrar voluntario
+  avistamientos.py          # informar avistamiento, listado, detalle
+templates/                # Jinja2, heredan de base.html
+static/css/estilos.css     # mismo sistema visual que la Tarea 1
+static/js/                 # validaciones de cliente + cascading selects
+static/uploads/             # fotos/video subidos (no se suben al repo)
+bdds_y_modelorelacional/     # los 3 .sql que dio el curso + el diagrama
+```

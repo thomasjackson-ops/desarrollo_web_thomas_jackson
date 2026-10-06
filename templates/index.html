@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block titulo %}Aves de Chile — Inicio{% endblock %}
+
+{% block content %}
+  <section class="tarjeta">
+    <h1>Bienvenido(a) al registro de avistamientos de aves</h1>
+    <p>
+      Este sistema es impulsado por la Unión de Ornitólogos de Chile para mantener
+      actualizado el registro de avistamientos de aves realizados por personas
+      voluntarias a lo largo del país, y así poder detectar cambios en la
+      población de aves asociados a fenómenos del clima.
+    </p>
+  </section>
+
+  <section aria-labelledby="titulo-acciones">
+    <h2 id="titulo-acciones">¿Qué quieres hacer?</h2>
+    <div class="acciones-principales">
+      <article>
+        <h3>Registrar voluntario</h3>
+        <p>Regístrate con tus datos de contacto para poder informar avistamientos.</p>
+        <a class="boton" href="{{ url_for('voluntarios.nuevo') }}">Registrar voluntario</a>
+      </article>
+      <article>
+        <h3>Informar avistamiento</h3>
+        <p>Registra el ave, el lugar, la fecha y hora, y una foto o video como evidencia.</p>
+        <a class="boton secundario" href="{{ url_for('avistamientos.nuevo') }}">Informar avistamiento</a>
+      </article>
+      <article>
+        <h3>Estadísticas</h3>
+        <p>Indicadores y gráficos sobre voluntarios y avistamientos registrados.</p>
+        <a class="boton secundario" href="{{ url_for('main.estadisticas') }}">Ver estadísticas</a>
+      </article>
+    </div>
+  </section>
+
+  <section aria-labelledby="titulo-ultimos">
+    <h2 id="titulo-ultimos">Últimos avistamientos agregados</h2>
+    {% if ultimos_avistamientos %}
+      <ul class="lista-ultimos-avistamientos">
+        {% for avistamiento in ultimos_avistamientos %}
+          <li>
+            <p class="ave-nombre">{{ avistamiento.ave.nombre }}</p>
+            <p class="detalle-secundario">
+              {{ avistamiento.lugar }} · {{ avistamiento.fecha_hora | fecha_larga }} ·
+              informado por {{ avistamiento.voluntario.nombre }}
+            </p>
+            <a href="{{ url_for('avistamientos.detalle', avistamiento_id=avistamiento.id) }}">Ver detalle</a>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Todavía no hay avistamientos registrados. <a href="{{ url_for('avistamientos.nuevo') }}">Sé el primero en informar uno</a>.</p>
+    {% endif %}
+    <p><a href="{{ url_for('avistamientos.listado') }}">Ver el listado completo de avistamientos →</a></p>
+  </section>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block titulo %}Aves de Chile — Detalle de avistamiento{% endblock %}
+
+{% block content %}
+  <p><a href="{{ url_for('avistamientos.listado') }}">&larr; Volver al listado</a></p>
+
+  <h1>Avistamiento de {{ avistamiento.ave.nombre }}</h1>
+
+  <div class="tarjeta">
+    <dl class="detalle-avistamiento">
+      <dt>Ave</dt>
+      <dd>{{ avistamiento.ave.nombre }}</dd>
+
+      <dt>Fecha y hora</dt>
+      <dd>{{ avistamiento.fecha_hora | fecha_larga }}</dd>
+
+      <dt>Lugar</dt>
+      <dd>{{ avistamiento.lugar }}</dd>
+
+      {% if avistamiento.descripcion %}
+        <dt>Descripción</dt>
+        <dd>{{ avistamiento.descripcion }}</dd>
+      {% endif %}
+
+      <dt>Voluntario(a)</dt>
+      <dd>{{ avistamiento.voluntario.nombre }} ({{ avistamiento.voluntario.email }}, {{ avistamiento.voluntario.telefono }})</dd>
+
+      <dt>Comuna del voluntario(a)</dt>
+      <dd>{{ avistamiento.voluntario.comuna.nombre }}, {{ avistamiento.voluntario.comuna.region.nombre }}</dd>
+    </dl>
+  </div>
+
+  <section aria-labelledby="titulo-evidencia">
+    <h2 id="titulo-evidencia">Evidencia adjunta</h2>
+    {% if avistamiento.registros %}
+      <ul class="galeria-evidencia">
+        {% for registro in avistamiento.registros %}
+          <li>
+            <figure>
+              {% if registro.es_video %}
+                <video controls preload="metadata">
+                  <source src="{{ url_for('static', filename=registro.ruta_archivo) }}">
+                  Tu navegador no puede reproducir este video.
+                </video>
+              {% else %}
+                <img src="{{ url_for('static', filename=registro.ruta_archivo) }}" alt="Evidencia del avistamiento: {{ registro.nombre_archivo }}">
+              {% endif %}
+              <figcaption>{{ registro.nombre_archivo }}</figcaption>
+            </figure>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>Este avistamiento no tiene evidencia adjunta.</p>
+    {% endif %}
+  </section>
+{% endblock %}
