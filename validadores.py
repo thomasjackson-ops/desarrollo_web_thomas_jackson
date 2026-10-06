@@ -86,6 +86,9 @@ def validar_archivos(archivos, extensiones_permitidas, tamano_maximo_mb):
         if extension not in extensiones_permitidas:
             return False, f'El archivo "{archivo.filename}" no es una foto o video permitido.'
 
+        # No hay forma directa de pedir el tamaño sin leer el archivo, así
+        # que me muevo al final del stream, anoto la posición (=tamaño) y
+        # vuelvo al principio para que después se pueda guardar bien.
         archivo.stream.seek(0, os.SEEK_END)
         tamano_bytes = archivo.stream.tell()
         archivo.stream.seek(0)

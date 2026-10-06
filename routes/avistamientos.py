@@ -162,10 +162,15 @@ def nuevo():
 
 @bp.route("")
 def listado():
+    # Todo lo que viene de la URL se trata como sospechoso: si pagina no es
+    # un entero (?pagina=abc) o viene negativa, type=int ya devuelve None y
+    # quedamos con el valor por defecto en vez de reventar.
     pagina = request.args.get("pagina", 1, type=int) or 1
     if pagina < 1:
         pagina = 1
 
+    # por_pagina solo puede ser uno de los 3 valores del select; cualquier
+    # otra cosa (?por_pagina=99999) se ignora y cae al default
     por_pagina = request.args.get("por_pagina", 10, type=int)
     if por_pagina not in TAMANOS_PAGINA_PERMITIDOS:
         por_pagina = 10
@@ -184,8 +189,12 @@ def listado():
             consulta = consulta.filter(Avistamiento.ave_id == ave_id)
 
     consulta = consulta.order_by(orden)
+    # error_out=False: si piden una página que no existe (ej. la 500), Flask-
+    # SQLAlchemy devuelve una página vacía en vez de tirar un 404 feo
     paginacion = consulta.paginate(page=pagina, per_page=por_pagina, error_out=False)
 
+    # el select de "filtrar por ave" solo muestra aves que de verdad tienen
+    # algún avistamiento, no las 585 completas (quedaría gigante e inútil)
     aves_con_avistamientos = (
         Ave.query.join(Avistamiento).distinct().order_by(Ave.nombre).all()
     )

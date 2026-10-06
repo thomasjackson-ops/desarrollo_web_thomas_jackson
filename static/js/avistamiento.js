@@ -15,6 +15,9 @@ document.addEventListener("DOMContentLoaded", function () {
   const campoFecha = document.getElementById("fecha");
   if (campoFecha) campoFecha.setAttribute("max", hoy);
 
+  // el datalist deja escribir cualquier cosa igual, por eso ademas de los
+  // <option> en el html tengo esta misma lista en json para poder validar
+  // que lo que escribieron matchee con alguna especie real
   const elementoAves = document.getElementById("datos-aves");
   const nombresAves = elementoAves ? JSON.parse(elementoAves.textContent) : [];
   const nombresAvesMinuscula = nombresAves.map(function (n) { return n.toLowerCase(); });

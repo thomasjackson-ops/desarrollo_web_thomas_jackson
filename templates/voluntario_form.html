@@ -71,6 +71,7 @@
     <button type="submit">Registrarme</button>
   </form>
 
+  <!-- region-comuna.js lee este json para armar el select de comuna cuando cambia la región -->
   <script type="application/json" id="datos-regiones">{{ regiones_json | tojson }}</script>
   <script type="application/json" id="comuna-seleccionada">{{ valores.get('comuna', '') | tojson }}</script>
 {% endblock %}

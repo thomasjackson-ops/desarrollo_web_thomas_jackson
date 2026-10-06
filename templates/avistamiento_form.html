@@ -37,6 +37,7 @@
       <legend>Identificación del ave</legend>
       <div class="campo">
         <label for="ave">Ave <span class="obligatorio">*</span></label>
+        <!-- datalist nativo de html5, no hace falta js para el autocompletado -->
         <input type="text" id="ave" name="ave" list="lista-aves" autocomplete="off"
                value="{{ valores.get('ave', '') }}"
                {% if errores.get('ave') %}aria-invalid="true"{% endif %}>
@@ -98,6 +99,7 @@
     <button type="submit">Registrar avistamiento</button>
   </form>
 
+  {# mismo listado de nombres que el datalist de arriba, pero en JSON para que avistamiento.js pueda validarlo #}
   <script type="application/json" id="datos-aves">{{ aves | map(attribute="nombre") | list | tojson }}</script>
 {% endblock %}
 

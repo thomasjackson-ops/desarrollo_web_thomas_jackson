@@ -79,5 +79,7 @@ class Registro(db.Model):
 
     @property
     def es_video(self):
+        # usado en el template de detalle para decidir si el archivo se
+        # muestra con <img> o con <video>
         extension = self.nombre_archivo.rsplit(".", 1)[-1].lower() if "." in self.nombre_archivo else ""
         return extension in {"mp4", "mov", "webm", "ogg"}

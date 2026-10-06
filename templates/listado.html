@@ -71,6 +71,7 @@
     </table>
   </div>
 
+  <!-- se arrastran ave_id/orden/por_pagina en cada link para no perder el filtro al cambiar de página -->
   <nav class="paginacion" aria-label="Paginación de resultados">
     {% if paginacion.has_prev %}
       <a class="boton secundario" href="{{ url_for('avistamientos.listado', pagina=paginacion.prev_num, ave_id=ave_filtro.id if ave_filtro else none, orden=orden_actual, por_pagina=por_pagina) }}">Anterior</a>
