@@ -430,10 +430,37 @@ dl.detalle-avistamiento dd {
   margin: 0;
 }
 
-/* Gráficos SVG de estadísticas (para la Tarea 3) */
-.grafico-svg {
-  width: 100%;
-  height: auto;
+/* Gráficos de estadísticas (Chart.js, Tarea 3) */
+.contenedor-grafico {
+  position: relative;
+  height: 320px;
+  max-width: 100%;
+}
+
+/* Comentarios en el detalle de avistamiento */
+.lista-comentarios {
+  list-style: none;
+  margin: 0 0 1.5rem;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.lista-comentarios li {
+  background-color: var(--color-superficie);
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio);
+  padding: 0.75rem 1rem;
+}
+
+.lista-comentarios .comentario-encabezado {
+  margin: 0 0 0.3rem;
+  font-size: 0.88rem;
+  color: #555;
+}
+
+.lista-comentarios li p:last-child {
+  margin: 0;
 }
 
 @media (max-width: 640px) {

@@ -1,17 +1,19 @@
 import os
 import uuid
 
-from flask import Blueprint, current_app, flash, redirect, render_template, request, url_for
+from flask import Blueprint, current_app, flash, jsonify, redirect, render_template, request, url_for
 from werkzeug.utils import secure_filename
 
 from extensions import db
-from models import Ave, Avistamiento, Registro, Voluntario
+from models import Ave, Avistamiento, Comentario, Registro, Voluntario
 from validadores import (
     combinar_fecha_hora,
     validar_archivos,
     validar_descripcion,
     validar_fecha_hora_avistamiento,
     validar_lugar,
+    validar_nombre_comentarista,
+    validar_texto_comentario,
 )
 
 bp = Blueprint("avistamientos", __name__, url_prefix="/avistamientos")
@@ -215,3 +217,44 @@ def listado():
 def detalle(avistamiento_id):
     avistamiento = Avistamiento.query.get_or_404(avistamiento_id)
     return render_template("detalle.html", active="listado", avistamiento=avistamiento)
+
+
+# --- Comentarios: estas dos rutas las consume comentarios.js via fetch, ---
+# --- nunca se renderiza un template desde acá, siempre responden JSON ---
+
+@bp.route("/<int:avistamiento_id>/comentarios", methods=["GET"])
+def listar_comentarios(avistamiento_id):
+    # 404 si mandan un id de avistamiento que no existe, antes de ir a buscar nada
+    Avistamiento.query.get_or_404(avistamiento_id)
+    comentarios = (
+        Comentario.query.filter_by(avistamiento_id=avistamiento_id)
+        .order_by(Comentario.fecha.asc())
+        .all()
+    )
+    return jsonify([c.a_dict() for c in comentarios])
+
+
+@bp.route("/<int:avistamiento_id>/comentarios", methods=["POST"])
+def agregar_comentario(avistamiento_id):
+    Avistamiento.query.get_or_404(avistamiento_id)
+
+    # comentarios.js manda JSON, pero dejo request.form como respaldo por si
+    # alguien prueba esto con curl mandando form-urlencoded en vez de json
+    datos = request.get_json(silent=True) or request.form
+    nombre = (datos.get("nombre") or "").strip()
+    texto = (datos.get("texto") or "").strip()
+
+    errores = {}
+    if not validar_nombre_comentarista(nombre):
+        errores["nombre"] = "El nombre debe tener entre 3 y 50 caracteres."
+    if not validar_texto_comentario(texto):
+        errores["texto"] = "El comentario debe tener entre 5 y 300 caracteres."
+
+    if errores:
+        return jsonify({"errores": errores}), 400
+
+    comentario = Comentario(nombre=nombre, texto=texto, avistamiento_id=avistamiento_id)
+    db.session.add(comentario)
+    db.session.commit()
+
+    return jsonify(comentario.a_dict()), 201
