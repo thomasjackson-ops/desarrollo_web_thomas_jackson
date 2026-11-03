@@ -83,3 +83,21 @@ class Registro(db.Model):
         # muestra con <img> o con <video>
         extension = self.nombre_archivo.rsplit(".", 1)[-1].lower() if "." in self.nombre_archivo else ""
         return extension in {"mp4", "mov", "webm", "ogg"}
+
+
+class Comentario(db.Model):
+    __tablename__ = "comentario"
+
+    id = db.Column(db.Integer, primary_key=True)
+    nombre = db.Column(db.String(80), nullable=False)
+    texto = db.Column(db.String(300), nullable=False)
+    fecha = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    avistamiento_id = db.Column(db.Integer, db.ForeignKey("avistamiento.id"), nullable=False)
+
+    def a_dict(self):
+        # Lo que le mandamos al JS cuando pide el listado por fetch
+        return {
+            "nombre": self.nombre,
+            "texto": self.texto,
+            "fecha": self.fecha.strftime("%d-%m-%Y %H:%M"),
+        }

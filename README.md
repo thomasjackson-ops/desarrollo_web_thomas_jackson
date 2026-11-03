@@ -1,9 +1,10 @@
-# Aves de Chile — Tarea 2 (CC5002)
+# Aves de Chile — Tarea 3 (CC5002)
 
-Backend en Flask + SQLAlchemy + MySQL para las funcionalidades de registro
-de voluntario, registro de avistamiento (con archivos de verdad) y listado
-paginado/filtrado/con detalle, construido sobre el prototipo de la Tarea 1.
-Las estadísticas quedan para la Tarea 3, según el enunciado.
+Backend en Flask + SQLAlchemy + MySQL. Sobre lo que ya estaba hecho en la
+Tarea 2 (registro de voluntario, registro de avistamiento con archivos,
+listado paginado/filtrado/con detalle) esta entrega agrega las
+estadísticas con gráficos y los comentarios en el detalle de cada
+avistamiento.
 
 ## Cómo correrlo
 
@@ -22,7 +23,11 @@ exige el enunciado):
 mysql -u root < bdds_y_modelorelacional/tarea2.sql
 mysql -u root tarea2 --default-character-set=utf8 < bdds_y_modelorelacional/region-comuna.sql
 mysql -u root tarea2 --default-character-set=utf8 < bdds_y_modelorelacional/aves.sql
+mysql -u root tarea2 < bdds_y_modelorelacional/tabla-comentario.sql
 ```
+
+El último script es nuevo de esta tarea: agrega la tabla `comentario` sobre
+la misma base de datos de la Tarea 2, no toca nada de lo que ya existía.
 
 Lo del `--default-character-set=utf8` no es opcional: si se cargan esos dos
 archivos sin especificarlo, el cliente de mysql asume otro charset y los
@@ -110,21 +115,77 @@ extensión (lista blanca) y tamaño máximo antes de guardar nada en disco, y
 el nombre con el que se guardan en el filesystem nunca es el que mandó el
 usuario (`secure_filename` + UUID), para evitar path traversal.
 
+## Decisiones de la Tarea 3
+
+**La torta agrupa por especie, no por "tipo de ave".** El enunciado pide
+un gráfico "por tipo de ave", pero la tabla `ave` (igual que en la T2)
+solo tiene `nombre`, sin ninguna columna de categoría. Preferí no meterle
+una columna al esquema que dieron ni inventar una clasificación para 585
+especies que el curso nunca definió, así que la torta agrupa por
+`ave.nombre` no mas, que es la única clasificación real que existe en los
+datos.
+
+**Los 3 gráficos piden su data por separado con `fetch`.**
+`static/js/estadisticas.js` hace un fetch a cada uno de los 3 endpoints
+JSON que agregué en `routes/main.py` (`/estadisticas/datos/avistamientos-por-dia`,
+`-por-ave` y `/estadisticas/datos/voluntarios-por-comuna`) y dibuja los
+gráficos con esa respuesta. El servidor nunca arma HTML para esto, solo
+devuelve JSON con una consulta agregada (GROUP BY + COUNT) por gráfico.
+
+**Librería de gráficos: Chart.js.** No es ninguna de las dos que nombra el
+enunciado (Flot/Highcharts), pero entra en "u otras para la cual tenga
+derecho de uso": es MIT, gratis para cualquier uso, y se carga desde CDN
+(cdn.jsdelivr.net) en `estadisticas.html`. La elegí por ser mas liviana que
+Flot (no depende de jQuery) y por no tener las restricciones de licencia
+comercial que tiene Highcharts para uso no educacional.
+
+**Agregar y listar comentarios son 100% asíncronos**, tal como pide el
+enunciado — ninguno de los dos pasa por un render de Jinja. Al cargar
+`detalle.html`, `comentarios.js` hace un fetch GET a
+`/avistamientos/<id>/comentarios` para pintar el listado, y al enviar el
+formulario hace un fetch POST a esa misma URL. Después de un alta exitosa
+se vuelve a pedir la lista entera, así aparece el comentario nuevo sin
+recargar la página.
+
+**El nombre del comentarista no tiene regla de "solo letras".** El
+enunciado pide exactamente "obligatorio con largo mínimo 3 y máximo 50",
+nada más — a diferencia del nombre del voluntario (que sí exige solo
+letras, porque esa regla la definí yo desde la Tarea 1 y no venía en
+ningún enunciado). Acá me ceñí estricto a lo que pedían y no le agregué
+una restricción de mas.
+
+**Ojo con el XSS en los comentarios.** A diferencia del resto del sitio
+(donde todo pasa por Jinja2, que escapa automático), el texto de un
+comentario lo inserta en el DOM `comentarios.js` directamente, porque
+llega por fetch como JSON. Por eso el listado se arma con `textContent` (y
+`createElement`/`createTextNode`), nunca con `innerHTML` concatenando el
+texto — si no, cualquiera podría dejar un comentario con `<script>` y se
+ejecutaría en el navegador de quien abra ese avistamiento después. Lo
+probé a propósito mandando un comentario con `<script>alert(1)</script>` y
+confirmé que queda como texto plano, no se ejecuta.
+
 ## Estructura
 
 ```
 app.py                  # crea la app, registra blueprints, errorhandlers
 config.py                # credenciales de BD, carpeta de uploads, límites
 extensions.py             # instancia de SQLAlchemy
-models.py                 # mapea 1 a 1 las tablas de tarea2.sql
+models.py                 # mapea 1 a 1 las tablas de tarea2 (+ comentario)
 validadores.py            # todas las reglas de validación de servidor
 routes/
-  main.py                 # portada + placeholder de estadísticas
+  main.py                 # portada + estadísticas (página y los 3 endpoints JSON)
   voluntarios.py           # registrar voluntario
-  avistamientos.py          # informar avistamiento, listado, detalle
+  avistamientos.py          # avistamiento (alta/listado/detalle) + comentarios (JSON)
 templates/                # Jinja2, heredan de base.html
-static/css/estilos.css     # mismo sistema visual que la Tarea 1
-static/js/                 # validaciones de cliente + cascading selects
+static/css/estilos.css     # mismo sistema visual desde la Tarea 1
+static/js/
+  validaciones.js           # reglas de validación compartidas en el cliente
+  region-comuna.js           # cascading select región→comuna
+  voluntario.js               # validación del formulario de voluntario
+  avistamiento.js              # validación del formulario de avistamiento
+  listado.js                    # fila clickeable del listado
+  estadisticas.js                 # fetch a los 3 endpoints + Chart.js
+  comentarios.js                   # fetch GET/POST de comentarios (async)
 static/uploads/             # fotos/video subidos (no se suben al repo)
-bdds_y_modelorelacional/     # los 3 .sql que dio el curso + el diagrama
+bdds_y_modelorelacional/     # los .sql que dio el curso + los enunciados
 ```

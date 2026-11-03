@@ -35,6 +35,21 @@ def validar_lugar(valor):
     return bool(valor) and len(valor) <= 200
 
 
+def validar_nombre_comentarista(valor):
+    # El enunciado solo pide largo mínimo 3 y máximo 50, nada de restringir
+    # a letras (a diferencia del nombre del voluntario), asi que no le meto
+    # una regla que no pidieron
+    valor = (valor or "").strip()
+    return 3 <= len(valor) <= 50
+
+
+def validar_texto_comentario(valor):
+    # Minimo 5 que pide el enunciado, máximo 300 porque es lo que da la
+    # columna texto VARCHAR(300) de la tabla
+    valor = (valor or "").strip()
+    return 5 <= len(valor) <= 300
+
+
 def validar_descripcion(valor):
     # Es opcional, por eso una cadena vacía también es válida.
     valor = (valor or "").strip()

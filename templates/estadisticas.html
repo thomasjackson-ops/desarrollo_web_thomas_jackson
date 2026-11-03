@@ -4,12 +4,32 @@
 
 {% block content %}
   <h1>Estadísticas</h1>
-  <div class="tarjeta">
-    <p>
-      Los indicadores y gráficos sobre voluntarios y avistamientos registrados
-      quedaron definidos como alcance de la próxima tarea (Tarea 3), tal como
-      indica el enunciado de esta tarea.
-    </p>
-    <p><a class="boton secundario" href="{{ url_for('main.portada') }}">Volver al inicio</a></p>
-  </div>
+
+  <section class="tarjeta" aria-labelledby="titulo-grafico-dia">
+    <h2 id="titulo-grafico-dia">Avistamientos por día</h2>
+    <div class="contenedor-grafico">
+      <canvas id="grafico-dia" role="img" aria-label="Gráfico de línea con la cantidad de avistamientos registrados por día"></canvas>
+    </div>
+  </section>
+
+  <section class="tarjeta" aria-labelledby="titulo-grafico-ave">
+    <h2 id="titulo-grafico-ave">Avistamientos por ave</h2>
+    <div class="contenedor-grafico">
+      <canvas id="grafico-ave" role="img" aria-label="Gráfico de torta con el total de avistamientos por ave"></canvas>
+    </div>
+  </section>
+
+  <section class="tarjeta" aria-labelledby="titulo-grafico-comuna">
+    <h2 id="titulo-grafico-comuna">Voluntarios por comuna</h2>
+    <div class="contenedor-grafico">
+      <canvas id="grafico-comuna" role="img" aria-label="Gráfico de barras con el total de voluntarios registrados por comuna"></canvas>
+    </div>
+  </section>
+
+  <p><a class="boton secundario" href="{{ url_for('main.portada') }}">Volver al inicio</a></p>
+{% endblock %}
+
+{% block scripts %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+  <script src="{{ url_for('static', filename='js/estadisticas.js') }}"></script>
 {% endblock %}

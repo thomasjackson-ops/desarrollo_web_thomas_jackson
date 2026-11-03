@@ -55,4 +55,35 @@
       <p>Este avistamiento no tiene evidencia adjunta.</p>
     {% endif %}
   </section>
+
+  <section aria-labelledby="titulo-comentarios" id="seccion-comentarios" data-avistamiento-id="{{ avistamiento.id }}">
+    <h2 id="titulo-comentarios">Comentarios</h2>
+
+    <ul id="lista-comentarios" class="lista-comentarios">
+      <li>Cargando comentarios…</li>
+    </ul>
+
+    <div id="mensaje-comentario" role="alert"></div>
+
+    <form id="formulario-comentario" novalidate>
+      <div class="campo">
+        <label for="nombre-comentario">Nombre <span class="obligatorio">*</span></label>
+        <input type="text" id="nombre-comentario" name="nombre" maxlength="50">
+        <p class="error" id="error-nombre-comentario"></p>
+      </div>
+
+      <div class="campo">
+        <label for="texto-comentario">Comentario <span class="obligatorio">*</span></label>
+        <textarea id="texto-comentario" name="texto" rows="3" cols="40" maxlength="300"></textarea>
+        <p class="error" id="error-texto-comentario"></p>
+      </div>
+
+      <button type="submit">Agregar comentario</button>
+    </form>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="{{ url_for('static', filename='js/validaciones.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/comentarios.js') }}"></script>
 {% endblock %}
