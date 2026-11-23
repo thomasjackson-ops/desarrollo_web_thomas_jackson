@@ -19,6 +19,7 @@
         <li><a href="{{ url_for('avistamientos.nuevo') }}" {% if active == 'avistamiento' %}aria-current="page"{% endif %}>Informar avistamiento</a></li>
         <li><a href="{{ url_for('avistamientos.listado') }}" {% if active == 'listado' %}aria-current="page"{% endif %}>Ver avistamientos</a></li>
         <li><a href="{{ url_for('main.estadisticas') }}" {% if active == 'estadisticas' %}aria-current="page"{% endif %}>Estadísticas</a></li>
+        <li><a href="http://127.0.0.1:8080/">Buscar avistamientos</a></li>
       </ul>
     </nav>
   </header>
@@ -36,7 +37,7 @@
   </main>
 
   <footer>
-    <p>Unión de Ornitólogos de Chile — Tarea 3 CC5002. Datos persistidos en MySQL.</p>
+    <p>Unión de Ornitólogos de Chile — Tarea 4 CC5002. Datos persistidos en MySQL.</p>
   </footer>
 
   {% block scripts %}{% endblock %}

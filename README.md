@@ -1,10 +1,11 @@
-# Aves de Chile — Tarea 3 (CC5002)
+# Aves de Chile — Tarea 4 (CC5002)
 
-Backend en Flask + SQLAlchemy + MySQL. Sobre lo que ya estaba hecho en la
-Tarea 2 (registro de voluntario, registro de avistamiento con archivos,
-listado paginado/filtrado/con detalle) esta entrega agrega las
-estadísticas con gráficos y los comentarios en el detalle de cada
-avistamiento.
+El grueso del sitio (registro de voluntario, avistamientos con archivos,
+listado, gráficos, comentarios) sigue siendo el Flask + SQLAlchemy de las
+tareas 2 y 3, sin tocar. Esta entrega agrega, aparte, un buscador de
+avistamientos y un sistema de notas — y el enunciado pide explícito que
+esto nuevo se haga con **Spring Boot + JPA**, asi que es un proyecto Java
+corriendo al lado, independiente, conversando con la misma base de datos.
 
 ## Cómo correrlo
 
@@ -24,23 +25,37 @@ mysql -u root < bdds_y_modelorelacional/tarea2.sql
 mysql -u root tarea2 --default-character-set=utf8 < bdds_y_modelorelacional/region-comuna.sql
 mysql -u root tarea2 --default-character-set=utf8 < bdds_y_modelorelacional/aves.sql
 mysql -u root tarea2 < bdds_y_modelorelacional/tabla-comentario.sql
+mysql -u root tarea2 < bdds_y_modelorelacional/tabla-nota.sql
 ```
 
-El último script es nuevo de esta tarea: agrega la tabla `comentario` sobre
-la misma base de datos de la Tarea 2, no toca nada de lo que ya existía.
+El penultimo script es de la Tarea 3 (tabla `comentario`), el último es
+nuevo de esta tarea (tabla `nota`). Los dos son aditivos, ninguno toca lo
+que ya existía.
 
 Lo del `--default-character-set=utf8` no es opcional: si se cargan esos dos
 archivos sin especificarlo, el cliente de mysql asume otro charset y los
 acentos quedan guardados corruptos (tipo "Regi├│n" en vez de "Región"). Por
 la misma razón la URI de conexión en `config.py` lleva `?charset=utf8mb4`.
 
-Y después:
+Y después, Flask de siempre:
 
 ```bash
 python app.py
 ```
 
 Abre `http://127.0.0.1:5000/`.
+
+Y en otra terminal, el proyecto de Spring Boot (usa su propio wrapper de
+Maven, no hace falta tener Maven instalado):
+
+```bash
+cd buscador-notas
+./mvnw spring-boot:run      # en Windows: mvnw.cmd spring-boot:run
+```
+
+Abre `http://127.0.0.1:8080/`. Necesita Java 17 o más nuevo — tarda un rato
+la primera vez porque el wrapper se descarga Maven y las dependencias de
+Spring.
 
 ## Decisiones y detalles a tener en cuenta
 
@@ -164,7 +179,64 @@ ejecutaría en el navegador de quien abra ese avistamiento después. Lo
 probé a propósito mandando un comentario con `<script>alert(1)</script>` y
 confirmé que queda como texto plano, no se ejecuta.
 
-## Estructura
+## Decisiones de la Tarea 4
+
+**Por qué Spring Boot quedó como proyecto aparte y no reescribí todo lo
+anterior.** El enunciado pide que lo NUEVO (buscador + notas) se haga con
+Spring Boot, pero no pide ni pondera portar de nuevo el registro de
+voluntario, los archivos, los comentarios ni los gráficos — eso ya estaba
+hecho y funcionando en Flask. Reescribir todo el sitio en Java hubiese sido
+varias veces mas trabajo que lo que esta tarea pondera, y el enunciado en
+ningún momento lo pide, así que `buscador-notas/` es un proyecto Spring
+Boot chico e independiente, que conversa con la misma base de datos
+`tarea2` (mismas credenciales de siempre) y corre aparte en el puerto 8080.
+Flask (puerto 5000) y Spring Boot se enlazan entre sí con un link en el
+menú, como si fueran dos secciones del mismo sitio — porque en la práctica
+lo son.
+
+**Entidades JPA mínimas.** Solo mapeé `Comuna`, `Voluntario`, `Ave`,
+`Avistamiento` y `Nota` — ni `Registro` ni `Comentario` hacen falta para
+esta funcionalidad, así que no los recreé en Java. Tampoco mapeé `Region`
+(el buscador no necesita mostrarla). `Nota` es la única entidad en la que
+de verdad se escribe.
+
+**El buscador es en vivo, con debounce de 300ms.** El enunciado pide que la
+búsqueda arranque sola apenas la persona empieza a escribir, sin botón. Si
+mandara un fetch por cada letra tecleada sería un poco bruto (y mas con
+585 aves en la tabla), así que `buscador.js` espera 300ms de silencio
+después de la última tecla antes de preguntarle al servidor. Esto no lo
+pide el enunciado explícito, es una decisión mía de rendimiento.
+
+**La búsqueda es por substring, sin acentos ni mayúsculas de por medio.**
+`LOWER(columna) LIKE :patron` en JPQL, con el patrón armado en el
+servidor (`%texto%`) y pasado como parámetro, nunca concatenado a mano —
+mismo criterio anti-inyección que ya veníamos aplicando en Flask. Busca a
+la vez en ave, voluntario y comuna; si el texto calza con cualquiera de
+los 3, el avistamiento aparece.
+
+**El resaltado (`<mark>`) se arma en el cliente, con nodos de texto, no con
+innerHTML.** Los nombres que se resaltan vienen de la base de datos y los
+escribió una persona real al registrarse (el nombre de un voluntario, por
+ejemplo) — si se armara la fila concatenando strings en innerHTML, alguien
+con un nombre tipo `<script>` podría ejecutar código en el navegador de
+cualquiera que buscara después. `buscador.js` corta el string en 3 pedazos
+(antes/coincide/después) y arma cada uno como nodo de texto aparte,
+envolviendo solo el que coincide en un `<mark>`.
+
+**La nota se valida en 3 capas.** El `<select>` del HTML solo ofrece 1 a 7
+(no se puede mandar un número fuera de rango desde la interfaz), el DTO
+`NuevaNotaRequest` lo revalida con Bean Validation (`@Min`/`@Max`) por si
+llega un POST hecho a mano, y si ni siquiera llega un número (JSON mal
+formado) hay un manejador de excepción aparte para que el error sea legible
+y no el stacktrace gigante que tira Spring por defecto.
+
+**El promedio no se guarda en ninguna parte, se recalcula siempre.** La
+tabla `nota` solo guarda notas individuales (una fila por evaluación); el
+promedio es un `AVG()` que se calcula al vuelo cada vez que se necesita
+—al buscar, y de nuevo después de insertar una nota nueva—, para no tener
+que mantener sincronizado un campo "promedio" en otra tabla.
+
+## Estructura (Flask)
 
 ```
 app.py                  # crea la app, registra blueprints, errorhandlers
@@ -188,4 +260,23 @@ static/js/
   comentarios.js                   # fetch GET/POST de comentarios (async)
 static/uploads/             # fotos/video subidos (no se suben al repo)
 bdds_y_modelorelacional/     # los .sql que dio el curso + los enunciados
+```
+
+## Estructura (Spring Boot, carpeta `buscador-notas/`)
+
+```
+pom.xml                              # Maven, incluye el wrapper (mvnw) así no hace falta tener Maven instalado
+src/main/resources/
+  application.properties              # datasource MySQL, mismo tarea2 de siempre, puerto 8080
+  static/
+    index.html                         # la pagina del buscador (input + tabla de resultados)
+    css/estilos.css                     # copia del mismo estilo del resto del sitio
+    js/buscador.js                       # busqueda en vivo, resaltado, y el flujo de evaluar
+src/main/java/cl/avesdechile/buscadornotas/
+  modelo/                               # entidades JPA: Comuna, Voluntario, Ave, Avistamiento, Nota
+  repositorio/                           # interfaces Spring Data JPA (ahi vive el @Query del buscador)
+  dto/                                    # lo que viaja como JSON (ResultadoBusqueda, NuevaNotaRequest, etc)
+  controlador/
+    BuscadorController.java               # GET /api/avistamientos/buscar
+    NotaController.java                    # POST /api/avistamientos/{id}/notas
 ```
