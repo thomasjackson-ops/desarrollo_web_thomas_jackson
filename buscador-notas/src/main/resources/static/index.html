@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aves de Chile — Buscar avistamientos</title>
+  <link rel="stylesheet" href="css/estilos.css">
+</head>
+<body>
+  <header>
+    <div class="marca">
+      <p class="titulo-sitio">Aves de Chile</p>
+    </div>
+    <nav aria-label="Navegación principal">
+      <ul>
+        <li><a href="http://127.0.0.1:5000/">Inicio</a></li>
+        <li><a href="http://127.0.0.1:5000/voluntarios/nuevo">Registrar voluntario</a></li>
+        <li><a href="http://127.0.0.1:5000/avistamientos/nuevo">Informar avistamiento</a></li>
+        <li><a href="http://127.0.0.1:5000/avistamientos">Ver avistamientos</a></li>
+        <li><a href="http://127.0.0.1:5000/estadisticas">Estadísticas</a></li>
+        <li><a href="/" aria-current="page">Buscar avistamientos</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Buscar avistamientos</h1>
+    <p>
+      Escribe el nombre de un ave, de un voluntario(a) o de una comuna.
+      La búsqueda se hace sola, no hace falta apretar ningún botón.
+    </p>
+
+    <div class="campo">
+      <label for="buscador">Buscar</label>
+      <input type="text" id="buscador" name="buscador" autocomplete="off" placeholder="ej: Zorzal, Camila, Temuco...">
+    </div>
+
+    <p id="mensaje-busqueda" aria-live="polite"></p>
+
+    <div class="tabla-scroll">
+      <table id="tabla-resultados" hidden>
+        <caption>Avistamientos encontrados</caption>
+        <thead>
+          <tr>
+            <th scope="col">Voluntario(a)</th>
+            <th scope="col">Día</th>
+            <th scope="col">Ave</th>
+            <th scope="col">Comuna</th>
+            <th scope="col">Nota</th>
+            <th scope="col">&nbsp;</th>
+          </tr>
+        </thead>
+        <tbody id="cuerpo-resultados"></tbody>
+      </table>
+    </div>
+  </main>
+
+  <footer>
+    <p>Unión de Ornitólogos de Chile — Tarea 4 CC5002. Backend de esta página en Spring Boot.</p>
+  </footer>
+
+  <script src="js/buscador.js"></script>
+</body>
+</html>
